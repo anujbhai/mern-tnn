@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
+
 const workoutRutes = require("./routes/workouts");
 const userRoutes = require("./routes/user");
 
@@ -14,6 +16,20 @@ app.use((req, res, next) => {
   console.log(req.path, req.method);
   next();
 });
+
+// Cross Origin Resource Sharing
+const whitelist = ["http://localhost:3000", "http://192.168.1.37:3000"];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 // routes
 app.use("/api/workouts", workoutRutes);
